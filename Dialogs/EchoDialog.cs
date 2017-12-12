@@ -11,6 +11,8 @@ namespace Microsoft.Bot.Sample.SimpleEchoBot
     [Serializable]
     public class EchoDialog : IDialog<object>
     {
+        private bool isSpanish;
+        
         public async Task StartAsync(IDialogContext context)
         {
             context.Wait(MessageReceivedAsync);
@@ -19,7 +21,16 @@ namespace Microsoft.Bot.Sample.SimpleEchoBot
         public async Task MessageReceivedAsync(IDialogContext context, IAwaitable<IMessageActivity> argument)
         {
             var message = await argument;
-            await context.PostAsync("You said: " + message.Text);
+            if(message.Text == "es")
+            {
+                isSpanish = true;
+            }
+            else if(message.Text == "en")
+            {
+                isSpanish = false;
+            }
+            var responseTxt = isSpanish ? "Tu dijiste: " : "You said: "; 
+            await context.PostAsync($"{responseTxt} {message.Text}");
             context.Wait(MessageReceivedAsync);
         }
     }
